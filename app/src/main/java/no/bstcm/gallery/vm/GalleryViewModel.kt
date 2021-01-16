@@ -10,5 +10,4 @@ class GalleryViewModel @ViewModelInject constructor(private val repository: Unsp
     ViewModel() {
 
     val photos = repository.getResults().cachedIn(viewModelScope)
-
 }

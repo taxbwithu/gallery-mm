@@ -18,5 +18,4 @@ class UnsplashRepository @Inject constructor(private val unsplashApi: UnsplashAp
             ),
             pagingSourceFactory = { UnsplashPagingSource(unsplashApi) }
         ).liveData
-
 }

@@ -1,5 +1,6 @@
 package no.bstcm.gallery.unsplash
 
+import android.util.Log
 import androidx.paging.PagingSource
 import retrofit2.HttpException
 import java.io.IOException
@@ -14,13 +15,11 @@ class UnsplashPagingSource(
 
         return try {
             val response = unsplashApi.randomPhotos(position, params.loadSize)
-            val photos = response.results
-
-            LoadResult.Page(
-                data = photos,
-                prevKey = if (position == STARTING_PAGE) null else position - 1,
-                nextKey = if (photos.isEmpty()) null else position + 1
-            )
+                LoadResult.Page(
+                    data = response,
+                    prevKey = if (position == STARTING_PAGE) null else position - 1,
+                    nextKey = if (response.isEmpty()) null else position + 1
+                )
         } catch (exception: IOException) {
             LoadResult.Error(exception)
         } catch (exception: HttpException) {

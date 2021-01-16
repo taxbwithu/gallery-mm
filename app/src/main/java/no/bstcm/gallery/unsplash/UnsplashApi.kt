@@ -13,9 +13,9 @@ interface UnsplashApi {
     }
 
     @Headers("Accept-Version: v1", "Authorization: Client-ID $CLIENT_ID")
-    @GET("/photos/random")
+    @GET("photos")
     suspend fun randomPhotos(
         @Query("page") page: Int,
         @Query("per_page") perPage: Int
-    ): UnsplashResponse
+    ): List<Photo>
 }
