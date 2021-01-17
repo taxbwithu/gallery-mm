@@ -6,7 +6,8 @@
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@drawable/image_gradient"/>
 
     <View
         android:layout_width="match_parent"
