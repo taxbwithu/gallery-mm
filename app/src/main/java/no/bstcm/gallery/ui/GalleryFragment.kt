@@ -7,21 +7,23 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_gallery.*
 import no.bstcm.gallery.R
 import no.bstcm.gallery.databinding.FragmentGalleryBinding
+import no.bstcm.gallery.unsplash.Photo
 import no.bstcm.gallery.unsplash.UnsplashPhotoAdapter
 import no.bstcm.gallery.unsplash.UnsplashPhotoLoadStateAdapter
 import no.bstcm.gallery.vm.GalleryViewModel
 
 @AndroidEntryPoint
-class GalleryFragment : Fragment(R.layout.fragment_gallery) {
+class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
-
+    private val loggedId = true
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
 
@@ -30,7 +32,7 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
 
         _binding = FragmentGalleryBinding.bind(view)
 
-        val adapter = UnsplashPhotoAdapter()
+        val adapter = UnsplashPhotoAdapter(this)
 
         val glm = GridLayoutManager(view.context, 2)
         glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -73,6 +75,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
         }
 
         setHasOptionsMenu(true)
+    }
+
+    override fun onItemClick(photo: Photo) {
+        val action = GalleryFragmentDirections.actionGalleryFragmentToDetailFragment(photo)
+        findNavController().navigate(action)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

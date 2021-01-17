@@ -10,9 +10,10 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import no.bstcm.gallery.R
 import no.bstcm.gallery.databinding.ItemUnsplashPhotoBinding
 
-class UnsplashPhotoAdapter : PagingDataAdapter<Photo, UnsplashPhotoAdapter.PhotoViewHolder>(
-    PHOTO_COMPARATOR
-) {
+class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
+    PagingDataAdapter<Photo, UnsplashPhotoAdapter.PhotoViewHolder>(
+        PHOTO_COMPARATOR
+    ) {
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         val currentItem = getItem(position)
@@ -30,8 +31,20 @@ class UnsplashPhotoAdapter : PagingDataAdapter<Photo, UnsplashPhotoAdapter.Photo
         return PhotoViewHolder(binding)
     }
 
-    class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
+    inner class PhotoViewHolder(private val binding: ItemUnsplashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item != null) {
+                        listener.onItemClick(item)
+                    }
+                }
+            }
+        }
 
         fun bind(photo: Photo) {
             binding.apply {
@@ -43,6 +56,10 @@ class UnsplashPhotoAdapter : PagingDataAdapter<Photo, UnsplashPhotoAdapter.Photo
                     .into(imageView)
             }
         }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(photo: Photo)
     }
 
     override fun getItemViewType(position: Int): Int {
