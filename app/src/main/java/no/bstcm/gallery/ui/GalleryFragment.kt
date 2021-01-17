@@ -1,8 +1,10 @@
 package no.bstcm.gallery.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -23,8 +25,9 @@ import no.bstcm.gallery.vm.GalleryViewModel
 class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
-    private val loggedId = true
+    private var loggedIn = true
     private var _binding: FragmentGalleryBinding? = null
+    private var menu : Menu? = null
     private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,24 +77,44 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapte
             }
         }
 
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("result")?.observe(
+            viewLifecycleOwner) { result ->
+            Log.d("TAG", "wynik" + result.toString())
+        }
+
         setHasOptionsMenu(true)
     }
 
     override fun onItemClick(photo: Photo) {
-        val action = GalleryFragmentDirections.actionGalleryFragmentToDetailFragment(photo)
-        findNavController().navigate(action)
+        if (loggedIn) {
+            val action = GalleryFragmentDirections.actionGalleryFragmentToDetailFragment(photo)
+            findNavController().navigate(action)
+        }
+        else {
+            openDialog()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-
         inflater.inflate(R.menu.menu_galery, menu)
 
-        val loginItem = menu.findItem(R.id.action_login)
+        this.menu = menu
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_login -> openDialog()
+        }
+        return true
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun openDialog(){
+        findNavController().navigate(R.id.login_dialog)
     }
 }

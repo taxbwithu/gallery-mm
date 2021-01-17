@@ -22,4 +22,9 @@
             android:name="photo"
             app:argType="no.bstcm.gallery.unsplash.Photo" />
     </fragment>
+
+    <dialog
+        android:id="@+id/login_dialog"
+        android:name="no.bstcm.gallery.ui.LoginDialog"
+        tools:layout="@layout/dialog_login"/>
 </navigation>

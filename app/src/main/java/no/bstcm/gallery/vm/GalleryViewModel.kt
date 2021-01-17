@@ -8,6 +8,5 @@ import no.bstcm.gallery.unsplash.UnsplashRepository
 
 class GalleryViewModel @ViewModelInject constructor(private val repository: UnsplashRepository) :
     ViewModel() {
-
     val photos = repository.getResults().cachedIn(viewModelScope)
 }
