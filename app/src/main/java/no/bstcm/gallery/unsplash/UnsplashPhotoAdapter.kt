@@ -36,13 +36,19 @@ class UnsplashPhotoAdapter : PagingDataAdapter<Photo, UnsplashPhotoAdapter.Photo
         fun bind(photo: Photo) {
             binding.apply {
                 Glide.with(itemView)
-                    .load(photo.urls.regular)
+                    .load(photo.urls.small)
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_no_internet)
                     .into(imageView)
             }
         }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        if (position == itemCount) {
+            return 1
+        } else return 2
     }
 
     companion object {
