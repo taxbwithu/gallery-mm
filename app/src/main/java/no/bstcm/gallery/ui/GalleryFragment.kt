@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,7 +26,7 @@ import no.bstcm.gallery.vm.GalleryViewModel
 class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapter.OnItemClickListener {
 
     private val viewModel by viewModels<GalleryViewModel>()
-    private var loggedIn = true
+    private var loggedIn = false
     private var _binding: FragmentGalleryBinding? = null
     private var menu : Menu? = null
     private val binding get() = _binding!!
@@ -79,7 +80,11 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapte
 
         findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("result")?.observe(
             viewLifecycleOwner) { result ->
-            Log.d("TAG", "wynik" + result.toString())
+            if(!loggedIn){
+                val loginItem = menu?.findItem(R.id.action_login)
+                loginItem?.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_logout))
+            }
+            loggedIn = true
         }
 
         setHasOptionsMenu(true)
@@ -98,13 +103,26 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapte
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_galery, menu)
-
         this.menu = menu
+
+        if(loggedIn){
+            val loginItem = menu.findItem(R.id.action_login)
+            loginItem?.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_logout))
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.action_login -> openDialog()
+            R.id.action_login -> {
+                if (loggedIn) {
+                    loggedIn = false
+                    val loginItem = menu?.findItem(R.id.action_login)
+                    loginItem?.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_login))
+                }
+                else{
+                    openDialog()
+                }
+            }
         }
         return true
     }

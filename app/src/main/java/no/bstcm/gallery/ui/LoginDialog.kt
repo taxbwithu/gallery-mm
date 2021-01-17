@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.DialogInterface.OnShowListener
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,11 +13,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.dialog_login.*
 import no.bstcm.gallery.R
 import no.bstcm.gallery.login.UserRepository
 import no.bstcm.gallery.rxutils.SchedulerProvider
@@ -26,7 +23,7 @@ import no.bstcm.gallery.rxutils.SchedulerProvider
 class LoginDialog() : AppCompatDialogFragment() {
     var editTextUsername: EditText? = null
     var editTextPassword: EditText? = null
-    var dialogView : View? = null
+    var dialogView: View? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(activity, R.style.AlertDialogTheme)
@@ -56,11 +53,13 @@ class LoginDialog() : AppCompatDialogFragment() {
                                 val handler = Handler(Looper.getMainLooper());
                                 val runnable = object : Runnable {
                                     override fun run() {
-                                        findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                                            "result",
-                                            true
-                                        )
-                                        errorDisplay(true)
+                                        dialogView?.post {
+                                            findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                                                "result",
+                                                true
+                                            )
+                                            errorDisplay(true)
+                                        }
                                     }
                                 }
                                 handler.post(runnable);
@@ -91,12 +90,11 @@ class LoginDialog() : AppCompatDialogFragment() {
         return dialog
     }
 
-    fun errorDisplay(credentialsCorrect : Boolean) {
+    fun errorDisplay(credentialsCorrect: Boolean) {
         val error = dialogView?.findViewById<TextView>(R.id.text_input_error)
-        if(credentialsCorrect){
+        if (credentialsCorrect) {
             error?.visibility = View.GONE
-        }
-        else{
+        } else {
             error?.visibility = View.VISIBLE
         }
     }
